@@ -1,0 +1,14 @@
+/* Styling for the home page: index.html */
+
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: rgb(252, 136, 155);
+    color: white;
+}

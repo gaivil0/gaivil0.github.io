@@ -1,0 +1,162 @@
+/* Styling for the game page: game.html */
+
+/* custom CSS variables for pink colors */
+:root {
+  --pink-highlight:#ffe6f0; /* light pink */
+  --pink-active:#ffd1e1; /* slightly deeper pink for the active cell */
+  --grid-border: rgb(252, 136, 155);
+}
+
+/* tell the browser to count padding and borders inside the set size for everything on the page
+so they don’t end up bigger than my setting */
+* { box-sizing: border-box; }
+
+/* page background color */
+body {
+  background: rgb(252, 136, 155);
+  color: #fff;
+}
+
+/* center the board content and limits dimensions for readability */
+.wrap {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: .25rem;
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2.2vw, 0.9rem);
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+/* Toolbar */
+/* add spacing between and allow wrapping on small screens */
+.toolbar { gap: 0.5rem; flex-wrap: wrap; }
+/* set a minimum width for the dropdown and buttons so they don’t get too small.*/
+.toolbar .form-select, .toolbar .btn { min-width: 140px; }
+
+/* Board Grids */
+/* make #board a CSS Grid container with 9 equal columns */
+#board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  border: 2px solid var(--grid-border);
+}
+
+/* Cells */
+.cell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;            /* locks each cell to be perfectly square */
+  border: 1px solid #d0d0d0;
+  background: #fff;
+}
+
+/* Thick borders for 3×3 boxes */
+/* add thicker pink lines around each 3×3 sub-grid by checking cell coordinates */
+.cell[data-row="0"], .cell[data-row="3"], .cell[data-row="6"] { border-top: 3px solid var(--grid-border); }
+.cell[data-row="8"] { border-bottom: 3px solid var(--grid-border); }
+.cell[data-col="0"], .cell[data-col="3"], .cell[data-col="6"] { border-left: 3px solid var(--grid-border); }
+.cell[data-col="8"] { border-right: 3px solid var(--grid-border); }
+
+/* Inputs (same look for givens and user cells) */
+.cell input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: clamp(1.1rem, 3.5vw, 2rem);
+  color: #000;
+  font-weight: 500;
+}
+
+/* Given cells: uneditable but same typography */
+.given input {
+  pointer-events: none;   /* click goes to parent cell so highlight works */
+  font-weight: 500;
+  background: transparent;
+}
+
+/* Live checking colors */
+/* !important will override any other conflicting declarations */
+.right input { color: #000 !important; }     /* correct = black */
+.wrong input { color: #d6336c !important; }  /* wrong = red */
+
+/* Highlights */
+/* highlight row, column, and 3x3 subgrid */
+.highlight { background: var(--pink-highlight) !important; }
+/* highlight active cell with a slightly darker pink */
+.active-cell { background: var(--pink-active) !important; }
+
+
+/* responsive padding that adapts to screen width */
+.site-logo {
+  padding-top: clamp(0.5rem, 2.5vw, 1.5rem) !important;
+  padding-left: clamp(0.75rem, 3vw, 2rem) !important;
+}
+
+/* max height scales; prevents logo from getting too big on small screens */
+.site-logo img {
+  max-height: clamp(40px, 8vw, 80px);
+  height: auto;
+}
+
+/* Congrats window that replaces the board when solved */
+
+/* moving confetti gif background */
+.confetti-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-size: cover;         /* don't tile and make the gif to be full size */
+  background-position: center;
+  z-index: 999;                   /* determine which element appears on top when elements overlap */
+  pointer-events: none;           /* transparent to any mouse/touch */
+}
+
+/* move the congrats window slightly downward + white bg + dark text */
+.congrats-overlay {
+  position: fixed;
+  top: 55%;                     /* was 50% — move it down a bit */
+  left: 50%;
+  transform: translate(-50%, -50%);  /* keep centered horizontally */
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  z-index: 1000;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  color: #000;
+}
+
+/* make the center image bigger (and responsive) */
+.congrats-overlay img {
+  width: clamp(160px, 40vw, 300px);
+  height: auto;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+/* Pink button theme */
+/* override Bootstrap’s button CSS variables to create a custom pink button */
+.btn-pink {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #ff4da6;
+  --bs-btn-border-color: #ff4da6;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #ff2d93;
+  --bs-btn-hover-border-color: #ff2d93;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #e61c80;
+  --bs-btn-active-border-color: #e61c80;
+  --bs-btn-focus-shadow-rgb: 255, 77, 166;
+}

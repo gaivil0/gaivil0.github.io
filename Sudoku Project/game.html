@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- The <meta charset> ensures the page uses UTF-8 (so punctuation like “—” displays correctly)
+        The viewport tag is critical for responsive layouts on phones (Bootstrap + CSS rely on it) -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Super Sudoku</title>
+
+    <!-- Bootstrap (for nice-looking buttons & forms) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Import Stylesheet (holds the board grid, cell sizes, highlight colors, and page layout
+        Placed after Bootstrap so it can override Bootstrap defaults when needed -->
+    <link rel="stylesheet" href="gamestyle.css">
+</head>
+
+
+<!-- Use "text-center" from Bootstrap to center headings and small UI bits
+    (The board itself uses CSS Grid defined in style.css, not Bootstrap’s grid)-->
+
+<body class="text-center">
+    <!--.wrap is our main content container (a fixed max-width so text doesn't stretch too wide on large screens) -->
+    <div class="wrap">
+
+        <header class="mb-3">
+            <a href="index.html" class="site-logo position-absolute top-0 start-0 pt-4 ps-5">
+                <img src="sudokupics/sudoku1.png" class="img-fluid" alt="Sudoku Logo"
+                    style="height: 80px; justify-content:left;">
+            </a>
+
+            <h1 class="mb-1 title">Super Sudoku</h1>
+            <p class="subtitle">👩🏻‍🏫 多项研究和专家已证实，经常玩数独可以提高多种智力 📚<br>😎 这就像带着你的大脑去健身房，但不需要使用重物或器械 🥊</p>
+        </header>
+
+
+        <!-- Toolbar: difficulty dropdown menu + action buttons
+            (The toolbar is responsive to Bootstrap classes (flex + wrap))-->
+        <div class="d-flex toolbar justify-content-center mb-3">
+
+            <!-- id="difficulty" is read by .js file to decide how many cells to fill or leave blank -->
+            <select id="difficulty" class="form-select form-select-sm w-auto">
+                <option value="easy" selected>Easy Peasy 太简单了</option>
+                <option value="medium">Normal 普普通通</option>
+                <option value="hard">Sudoku Master 数独大师</option>
+            </select>
+
+            <!-- Buttons are hooked to their id in .js file to generate/solve/clear -->
+            <button id="newGame" class="btn btn-light btn-sm fw-bold">New Game 新游戏</button>
+            <!--generates a new puzzle and renders it-->
+            <button id="solve" class="btn btn-outline-light btn-sm">Solve 一键通关🔍</button>
+            <!--fills the board with the precomputed solution-->
+            <button id="clearErrors" class="btn btn-outline-warning btn-sm">Clear Errors 清除</button>
+            <!--removes wrong inputs-->
+        </div>
+
+        <!-- Sudoku Board Container
+            id="board" is where game.js will dynamically inject a 9×9 grid of .cell elements
+            use aria-label for screen reader context; grid layout & cell borders are controlled via style.css-->
+        <div id="board" class="mb-3" aria-label="Sudoku board"></div>
+
+        <div><small class="text-white-50">Tip: Click a cell to highlight its row, column, and 3x3 box.</small></div>
+    </div>
+
+    <!-- Game Logic
+        links, loads, and execute the JavaScript file that has the game algorithm:
+            • Generates puzzles & solutions
+            • Renders the grid into #board
+            • Handles input checking, highlighting, and buttons-->
+    <script src="game.js"></script>
+</body>
+
+</html>

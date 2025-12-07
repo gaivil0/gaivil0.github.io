@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Echo-Bloom</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --text-main: #f7f7ff;
+      --text-muted: #a1a6c5;
+      --accent: #40e0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at 0% 0%, #021017 0%, #020914 45%, #000000 100%);
+    }
+
+    #visualizer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+
+    .panel {
+      position: fixed;
+      z-index: 10;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(130, 140, 210, 0.6);
+      background: rgba(6, 8, 20, 0.9);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .panel-left {
+      top: 14px;
+      left: 14px;
+      max-width: 260px;
+    }
+
+    .panel-right {
+      top: 14px;
+      right: 14px;
+      max-width: 420px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo {
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .row {
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      background: rgba(14, 17, 34, 0.95);
+      color: var(--text-main);
+      border-radius: 999px;
+      border: 1px solid rgba(90, 100, 170, 0.9);
+      padding: 0;
+      height: 6px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(64, 224, 255, 0.35);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      box-shadow: 0 0 0 3px rgba(64, 224, 255, 0.35);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: linear-gradient(90deg, rgba(64, 224, 255, 0.25), rgba(255, 160, 200, 0.4));
+      border-radius: 999px;
+    }
+
+    input[type="range"]::-moz-range-track {
+      background: linear-gradient(90deg, rgba(64, 224, 255, 0.25), rgba(255, 160, 200, 0.4));
+      border-radius: 999px;
+    }
+
+    .inline-value {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .small-text {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 360px;
+    }
+
+    .color-control {
+      position: relative;
+      width: 100%;
+      height: 28px;
+    }
+
+    .color-swatch {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(90, 100, 170, 0.9);
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7);
+    }
+
+    .color-control input[type="color"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border-radius: 999px;
+    }
+
+    .upload-wrap {
+      margin-bottom: 6px;
+    }
+
+    .upload-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(130, 140, 210, 0.7);
+      background: radial-gradient(circle at 0% 0%, rgba(140, 180, 255, 0.14), rgba(2, 4, 12, 0.9));
+      cursor: pointer;
+    }
+
+    .upload-title {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-main);
+    }
+
+    .upload-filename {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .player-shell {
+      margin-top: 6px;
+      padding: 6px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 0% 0%, rgba(120, 200, 255, 0.14), rgba(0, 0, 0, 0.9));
+      border: 1px solid rgba(110, 135, 210, 0.7);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.8);
+    }
+
+    audio {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+      background: transparent;
+    }
+
+    @media (max-width: 720px) {
+      .panel-left {
+        top: 10px;
+        left: 10px;
+        max-width: 52vw;
+      }
+      .panel-right {
+        top: auto;
+        bottom: 10px;
+        right: 10px;
+        max-width: calc(100vw - 20px);
+      }
+      .small-text {
+        max-width: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="visualizer"></canvas>
+
+  <!-- Left panel: branding + controls -->
+  <div class="panel panel-left">
+    <div class="brand-row">
+      <div class="logo">Echo-Bloom</div>
+    </div>
+
+    <div class="row">
+      <label>Accent</label>
+      <div class="color-control">
+        <div class="color-swatch" id="accentSwatch"></div>
+        <input id="accentColor" type="color" value="#40e0ff" />
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="sensitivity">Sens</label>
+      <input id="sensitivity" type="range" min="0.5" max="2.0" step="0.05" value="1.0" />
+      <div class="inline-value"><span id="sensitivityValue">1.00×</span></div>
+    </div>
+  </div>
+
+  <!-- Right panel: upload + player -->
+  <div class="panel panel-right">
+    <div class="upload-wrap">
+      <label class="upload-box" for="fileInput">
+        <span class="upload-title">Upload track</span>
+        <span class="upload-filename" id="fileName">Click to choose an audio file</span>
+      </label>
+      <input id="fileInput" type="file" accept="audio/*" />
+    </div>
+    <div class="player-shell">
+      <audio id="audio" controls></audio>
+    </div>
+    <div class="row small-text" id="fileInfo">No track loaded</div>
+  </div>
+
+  <script>
+    // ----- Canvas -----
+    const canvas = document.getElementById("visualizer");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      const dpi = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpi;
+      canvas.height = rect.height * dpi;
+      ctx.setTransform(dpi, 0, 0, dpi, 0, 0);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // ----- UI -----
+    const accentPicker = document.getElementById("accentColor");
+    const accentSwatch = document.getElementById("accentSwatch");
+    const sensitivitySlider = document.getElementById("sensitivity");
+    const sensitivityValue = document.getElementById("sensitivityValue");
+
+    const fileInput = document.getElementById("fileInput");
+    const fileNameEl = document.getElementById("fileName");
+    const audioEl = document.getElementById("audio");
+    const fileInfo = document.getElementById("fileInfo");
+
+    let accentColor = accentPicker.value;
+    let sensitivity = parseFloat(sensitivitySlider.value);
+
+    let accentR = 64,
+      accentG = 224,
+      accentB = 255;
+
+    function parseHexColor(hex) {
+      let h = hex.replace("#", "").trim();
+      if (h.length === 3) {
+        h = h
+          .split("")
+          .map((ch) => ch + ch)
+          .join("");
+      }
+      const num = parseInt(h, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    function updateAccentComponents() {
+      const { r, g, b } = parseHexColor(accentColor || "#40e0ff");
+      accentR = r;
+      accentG = g;
+      accentB = b;
+      accentSwatch.style.backgroundColor = accentColor;
+      document.documentElement.style.setProperty("--accent", accentColor);
+    }
+
+    function accentRGBA(alpha) {
+      return `rgba(${accentR}, ${accentG}, ${accentB}, ${alpha})`;
+    }
+
+    accentPicker.addEventListener("input", (e) => {
+      accentColor = e.target.value;
+      updateAccentComponents();
+    });
+
+    sensitivitySlider.addEventListener("input", (e) => {
+      sensitivity = parseFloat(e.target.value);
+      sensitivityValue.textContent = sensitivity.toFixed(2) + "×";
+    });
+
+    updateAccentComponents();
+
+    // ----- Audio / analyser -----
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let analyser = null;
+    let sourceNode = null;
+    let timeData = null;
+
+    const WAVE_BINS = 512;
+    let waveSamples = new Float32Array(WAVE_BINS).fill(0);
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      audioEl.src = url;
+      audioEl.load();
+      fileNameEl.textContent = file.name;
+      fileInfo.textContent = "Loaded: " + file.name;
+    });
+
+    function initAudioGraph() {
+      if (!audioCtx) {
+        audioCtx = new AudioContextClass();
+      }
+      if (!analyser) {
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        timeData = new Float32Array(analyser.fftSize);
+      }
+      if (!sourceNode) {
+        sourceNode = audioCtx.createMediaElementSource(audioEl);
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+      }
+    }
+
+    audioEl.addEventListener("play", async () => {
+      initAudioGraph();
+      if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+    });
+
+    // Space bar play/pause toggle
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        const tag = e.target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;
+        e.preventDefault();
+        if (!audioEl.src) return;
+        if (audioEl.paused) audioEl.play();
+        else audioEl.pause();
+      }
+    });
+
+    // ----- Energy / beats -----
+    let smoothLevel = 0;
+    let displayAmp = 0;
+
+    function computeEnergyAndBeat() {
+      if (!analyser || !timeData) {
+        return { level: 0, isBeat: false };
+      }
+
+      analyser.getFloatTimeDomainData(timeData);
+
+      let sumSq = 0;
+      const len = timeData.length;
+      for (let i = 0; i < len; i++) {
+        const v = timeData[i];
+        sumSq += v * v;
+      }
+      const rms = Math.sqrt(sumSq / len);
+
+      const alpha = 0.07;
+      smoothLevel = (1 - alpha) * smoothLevel + alpha * rms;
+
+      const step = len / WAVE_BINS;
+      for (let i = 0; i < WAVE_BINS; i++) {
+        const idx = Math.floor(i * step);
+        const sample = timeData[idx] || 0;
+        waveSamples[i] = 0.7 * waveSamples[i] + 0.3 * sample;
+      }
+
+      const ratio = smoothLevel > 0 ? rms / (smoothLevel + 1e-6) : 1;
+
+      const tNorm = (sensitivity - 0.5) / (2.0 - 0.5);
+      const baseHigh = 1.35;
+      const baseLow = 0.9;
+      const threshold = baseHigh - tNorm * (baseHigh - baseLow);
+
+      const isBeat = ratio > threshold && rms > 0.01;
+
+      return { level: rms, isBeat };
+    }
+
+    // ----- Kaleidoscope scope (万花筒) -----
+    function drawKaleidoscopeScope(cx, cy, w, h, timeSec, energy, isBeat) {
+      const size = Math.min(w, h);
+      const baseR = size * 0.13;
+      const radiusScale = size * 0.34;
+
+      const segments = 11;
+      const steps = WAVE_BINS;
+
+      // Medium-slow smooth rotation
+      const globalRotation = timeSec * 0.045;
+
+      // gentle beat pulse
+      const beatPulse = isBeat ? 0.08 : 0.0;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(globalRotation);
+
+      for (let layer = 0; layer < 2; layer++) {
+        const phaseShift = layer === 0 ? 0 : Math.PI / segments;
+        const layerAmpMul = layer === 0 ? 1.0 : 0.7;
+        const layerAlphaBase = layer === 0 ? 0.28 : 0.16;
+        const layerAlpha = layerAlphaBase + 0.45 * energy;
+        const indexOffset = (layer * WAVE_BINS) / 4;
+
+        for (let s = 0; s < segments; s++) {
+          const segOffset = (2 * Math.PI * s) / segments + phaseShift;
+          const flip = (s + layer) % 2 === 0 ? 1 : -1;
+
+          ctx.beginPath();
+          for (let i = 0; i < steps; i++) {
+            const t = i / (steps - 1);
+            const localAngle = t * (2 * Math.PI / segments);
+            const a = segOffset + localAngle * flip;
+
+            const idx =
+              (Math.floor(i + indexOffset) % WAVE_BINS + WAVE_BINS) % WAVE_BINS;
+            const sample = waveSamples[idx] || 0;
+            const amp = Math.abs(sample);
+
+            // curvature + small radial wobble for more movement
+            const curvature =
+              Math.sin(
+                t * Math.PI * 1.6 +
+                  layer * 0.9 +
+                  energy * 1.8 +
+                  timeSec * 0.2
+              ) *
+              (0.8 + 0.4 * amp);
+
+            const wobble = 0.08 * Math.sin(timeSec * 0.9 + t * 4.0);
+
+            const radius =
+              baseR +
+              radiusScale *
+                (0.22 +
+                  amp * 1.35 * layerAmpMul +
+                  energy * 0.5 +
+                  0.18 * curvature +
+                  wobble +
+                  beatPulse);
+
+            const x = radius * Math.cos(a);
+            const y = radius * Math.sin(a);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = accentRGBA(layerAlpha);
+          ctx.lineWidth = layer === 0 ? 1.4 : 0.9;
+          ctx.stroke();
+        }
+      }
+
+      // Inner XY oscilloscope (a bit faster than before)
+      const rScope = size * 0.22;
+      const len = 700;
+      const xyRotation = timeSec * 0.1;
+      const cosR = Math.cos(xyRotation);
+      const sinR = Math.sin(xyRotation);
+
+      ctx.beginPath();
+      for (let i = 0; i < len; i++) {
+        const idx1 = i % WAVE_BINS;
+        const idx2 = (i * 3) % WAVE_BINS;
+        const s1 = waveSamples[idx1] || 0;
+        const s2 = waveSamples[idx2] || 0;
+
+        let x = s1 * rScope * 1.5;
+        let y = s2 * rScope * 1.5;
+
+        const rx = x * cosR - y * sinR;
+        const ry = x * sinR + y * cosR;
+
+        if (i === 0) ctx.moveTo(rx, ry);
+        else ctx.lineTo(rx, ry);
+      }
+      ctx.strokeStyle = "rgba(0,0,0,0.95)";
+      ctx.lineWidth = 3.0;
+      ctx.stroke();
+
+      ctx.beginPath();
+      for (let i = 0; i < len; i++) {
+        const idx1 = i % WAVE_BINS;
+        const idx2 = (i * 3) % WAVE_BINS;
+        const s1 = waveSamples[idx1] || 0;
+        const s2 = waveSamples[idx2] || 0;
+
+        let x = s1 * rScope * 1.5;
+        let y = s2 * rScope * 1.5;
+
+        const rx = x * cosR - y * sinR;
+        const ry = x * sinR + y * cosR;
+
+        if (i === 0) ctx.moveTo(rx, ry);
+        else ctx.lineTo(rx, ry);
+      }
+      ctx.strokeStyle = accentRGBA(0.9);
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // ----- Animation loop -----
+    function drawFrame(timeMs) {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width || 640;
+      const h = rect.height || 360;
+      const cx = w / 2;
+      const cy = h / 2;
+      const timeSec = timeMs * 0.001;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+      ctx.fillRect(0, 0, w, h);
+
+      const { level, isBeat } = computeEnergyAndBeat();
+
+      let targetAmp = level * sensitivity * 8;
+      if (!Number.isFinite(targetAmp)) targetAmp = 0;
+      targetAmp = Math.max(0, Math.min(targetAmp, 1.0));
+
+      const lerp = 0.23;
+      displayAmp = displayAmp + lerp * (targetAmp - displayAmp);
+
+      drawKaleidoscopeScope(cx, cy, w, h, timeSec, displayAmp, isBeat);
+    }
+
+    function animate(timestamp) {
+      drawFrame(timestamp || 0);
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

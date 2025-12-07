@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/5.3/examples/cover/cover.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet"> <!-- override background color -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+    <title>SuperSudoku</title>
+</head>
+
+<body class="d-flex h-100 text-center" data-new-gr-c-s-check-loaded="14.1248.0" data-gr-ext-installed="">
+
+    <div class="container-fluid d-flex w-100 h-100 p-3 mx-auto flex-column">
+
+        <!-- Header + Navigation Section -->
+        <header class="mb-auto">
+            <div
+                class="d-flex flex-column flex-md-row justify-content-center justify-content-md-between align-items-center text-center">
+                <!-- WebGame Title -->
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <h3 class="mb-0">
+                        <a href="index.html" class="text-decoration-none text-white">
+                            Super Sudoku
+                        </a>
+                    </h3>
+                </div>
+                <!-- WebGame Icon -->
+                <div class="d-flex ">
+                    <a href="index.html">
+                        <img src="sudokupics/sudoku1.png" class="img-fluid" alt="Sudoku Logo"
+                            style="height: 80px; justify-content: center;">
+                    </a>
+                </div>
+                <!-- Navigation Bar -->
+                <nav class="nav nav-masthead justify-content-center float-md-end" aria-label="Navigation Bar">
+                    <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link fw-bold py-1 px-0" href="README.md">User Guide</a>
+                    <a class="nav-link fw-bold py-1 px-0" href="DESIGN.md">Design</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="px-3">
+            <div class="container-sm">
+
+                <!-- Headline -->
+                <!-- responsive font size applied; <span> forces a line break; keep the line inline -->
+                <h1 class="display-3" style="margin-top: 30px;">Think Fast. <span
+                        class="d-block d-sm-inline"></span>Solve Faster</h1>
+
+                <!-- Subhead -->
+                <h4 class="display-7 fw-light" style="margin-top:20px">Welcome to Your Daily Mind Gym</h4>
+
+                <!-- Body -->
+                <p class="mx-auto"
+                    style="max-width: 1000px; font-size: clamp(0.8rem, 1.5vw, 1.1rem); margin-top: 20px;">
+                    Sudoku is more than just a game — it's a quiet moment of clarity in a noisy world. Whether you're
+                    warming up with an easy puzzle or diving into a brain-burning challenge, this space is designed to
+                    help you focus, think clearly, and sharpen your logic.
+                </p>
+
+                <!-- Button -->
+                <p class="lead" style="margin-top: 50px;">
+                    <a href="game.html" class="btn btn-lg btn-light fw-bold border-white bg-white"
+                        style="font-size: clamp(1rem, 2vw, 1.25rem);">Start Now</a>
+                </p>
+
+            </div>
+        </main>
+
+        <footer class="mt-auto text-white-50" style="font-size:clamp(0.7rem, 1.5vw, 0.9rem) ;">
+            <p>© 2025 Olivia Gan</p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
